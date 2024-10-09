@@ -1,7 +1,7 @@
 # Shubham Mishra
 ## Associate Automation Tester at Cognizant | Performance Test Engineer | UI & API Automation Associate at Cognizant
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](linkedin.com/in/shubham-mishra-41271916b)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/shubham-mishra-41271916b)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-lightgrey)](https://github.com/suvm1204)
 
 Skilled Automation Test Engineer with 4 years of experience in developing, and implementing automation frameworks across Agile  projects . Expertise in API automation using Rest-assured and UI Automation using  Selenium/TestNG, performance testing, CI/CD pipelines, and Cloud-based application testing. Adept in JIRA and Confluence administration, SDLC/STLC and project management, with a proven track record of reducing testing times and improving software quality assurance . 
@@ -61,5 +61,5 @@ Skilled Automation Test Engineer with 4 years of experience in developing, and i
 Feel free to reach out for automation oppurtunities
 
 - Email: shubhammishra1204@gmail.com
-- [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](linkedin.com/in/shubham-mishra-41271916b)
+- [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/shubham-mishra-41271916b)
 - [![GitHub](https://img.shields.io/badge/GitHub-Follow-lightgrey)](https://github.com/suvm1204)
