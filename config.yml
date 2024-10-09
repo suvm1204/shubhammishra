@@ -1,0 +1,32 @@
+title: Shubham Mishra
+logo: /assets/img/profile-pic(1).png
+description: Associate Automation Tester at Cognizant | Performance Test Engineer | UI & API Automation 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+# Social links
+github_username: suvm1204
+linkedin_username: shubham-mishra-41271916b
+
+# Additional settings
+google_analytics: UA-XXXXXXXXX-X
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-paginate
+
+# Navigation
+nav:
+  - {name: 'Home', link: '/'}
+  - {name: 'Projects', link: '/projects'}
+  - {name: 'Research', link: '/research'}
+  - {name: 'Experience', link: '/experience'}
+  - {name: 'Education', link: '/education'}
+  - {name: 'Certifications', link: '/certifications'}
+  - {name: 'Contact', link: '/contact'}
+  - {name: 'Blog', link: '/blog'}
+
+# Footer
+footer:
+  - {name: 'Terms of Service', link: '/terms-of-service'}
