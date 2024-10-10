@@ -1,5 +1,5 @@
 # Shubham Mishra
-## Associate Automation Tester at Cognizant | Performance Test Engineer | UI & API Automation Associate at Cognizant
+## Associate Automation Tester at Cognizant | Performance Test Engineer | UI & API Automation| Pega application Testing
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/shubham-mishra-41271916b?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3Bef0Xs6YKS7SLFP4aY%2Bz4NA%3D%3D)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-lightgrey)](https://github.com/suvm1204)
@@ -13,7 +13,7 @@ Skilled Automation Test Engineer with 4 years of experience in developing, and i
 -  **UI and Database** Automation using Selenium Web driver, Maven and TestNG 
 -  **Performance Load**  testing using JMeter, Blazemeter, Grafana and NewRelic     
 - Project Management/Test Design/Bug Reporting using  JIRA, Confluence
-- Agile Testing, Git, Jenkins, Azure Cloud (AKS), XML, Design Patterns
+- Agile Testing, Git, Jenkins, Azure Cloud (AKS), Design Patterns, PEGA
 
 
 
@@ -48,7 +48,7 @@ Skilled Automation Test Engineer with 4 years of experience in developing, and i
 **Global Wealth and Asset Management (Domain: Banking/Payment) 2020 - 2021**                                                                                       
 - Contributed as a functional test analyst, managing online transactions test planning and retrospectives in JIRA XRAY.
 - Reported bugs and stored test evidence in Confluence, ensuring no post-production bugs.
-- Hands on Selenium and Postman automation scripting for modern front-end React.JS website.
+- Hands on Selenium and Postman automation scripting for CRM Pega website.
 
 
 ## 📜 Certifications
