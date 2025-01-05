@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.0/marked.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #0056b3;
+            --background-color: #f7f7f7;
+            --chat-bg: #ffffff;
+            --text-color: #1a1a1a;
+            --message-user-bg: #e1f0ff;
+            --message-bot-bg: #f0f0f0;
+            --border-color: #d1d1d1;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+            --nav-height: 60px;
+            --input-height: 70px;
+            --bottom-spacing: 20px;
+            --border-radius: 12px;
+        }
+
+        body {
+            background-color: var(--background-color);
+            height: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        .container {
+            height: calc(var(--vh, 1vh) * 100);
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            overflow: hidden;
+        }
+
+        .nav-header {
+            background-color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.5s ease-out;
+            box-shadow: 0 1px 3px var(--shadow-color);
+        }
+
+        .nav-header h1 {
+            color: var(--text-color);
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.3s forwards;
+        }
+
+        .home-button {
+            background-color: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .home-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-container {
+            background-color: var(--chat-bg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: calc(100% - var(--nav-height));
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1.2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--chat-bg);
+            gap: 1rem;
+            scroll-behavior: smooth;
+            max-height: calc(100vh - 150px);
+            padding-bottom: calc(var(--input-height) + var(--bottom-spacing));
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--border-radius);
+            line-height: 1.5;
+            box-shadow: 0 1px 2px var(--shadow-color);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: messageAppear 0.4s ease forwards;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: var(--message-user-bg);
+            color: var(--text-color);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background-color: var(--message-bot-bg);
+            color: var(--text-color);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input {
+            position: fixed;
+            bottom: var(--bottom-spacing);
+            left: 0;
+            right: 0;
+            height: var(--input-height);
+            padding: 0.8rem;
+            background-color: var(--background-color);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 0.8rem;
+            height: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 0.7rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            outline: none;
+            font-size: 1rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #message-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        #send-button {
+            padding: 0.7rem 1.3rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #send-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 1px 4px rgba(0, 122, 255, 0.3);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem;
+            color: #64748b;
+            font-style: italic;
+            align-items: center;
+            gap: 0.4rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .typing-animation {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes messageAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            40% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 122, 255, 0.2);
+            border-radius: 20px;
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 122, 255, 0.4);
+        }
+
+        /* Markdown Styling */
+        .markdown-body {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            overflow-wrap: break-word;
+        }
+
+        .markdown-body h1 {
+            font-size: 1.8em;
+            margin-bottom: 0.8em;
+            font-weight: bold;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5em;
+            margin-bottom: 0.7em;
+            font-weight: bold;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.3em;
+            margin-bottom: 0.6em;
+            font-weight: bold;
+        }
+
+        .markdown-body h4 {
+            font-size: 1.1em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+        .markdown-body h5 {
+            font-size: 1em;
+            margin-bottom: 0.4em;
+            font-weight: bold;
+        }
+
+        .markdown-body h6 {
+            font-size: 0.9em;
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+
+        .markdown-body p {
+            margin-bottom: 0.8em;
+        }
+         .markdown-body ul,
+        .markdown-body ol {
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+
+        .markdown-body li {
+            margin-bottom: 0.3em;
+        }
+
+        .markdown-body code {
+            background-color: #f0f0f0;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .markdown-body pre {
+            background-color: #f0f0f0;
+            padding: 0.8em;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .markdown-body blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 10px;
+            margin-left: 10px;
+            font-style: italic;
+        }
+
+        .markdown-body a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+        .markdown-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em auto;
+            border-radius: 8px;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 480px) {
+            :root {
+                --nav-height: 50px;
+                --input-height: 60px;
+                --bottom-spacing: 12px;
+                --border-radius: 8px;
+            }
+
+            .nav-header {
+                padding: 0.5rem 1rem;
+            }
+
+            .nav-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .chat-input {
+                padding: 0.5rem;
+            }
+
+            .input-container {
+                gap: 0.5rem;
+                padding: 0 0.5rem;
+            }
+
+            #message-input {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            #send-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 0.6rem 0.9rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="nav-header">
+            <h1>Chat with me</h1>
+            <button class="home-button" onclick="location.href='index.html';">
+                <i class="fas fa-home"></i>
+                Home
+            </button>
+        </div>
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">Hi!</div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <span>thinking...</span>
+                <div class="typing-animation">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <div class="input-container">
+                    <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ChatInterface {
+            constructor() {
+                this.messageInput = document.getElementById('message-input');
+                this.sendButton = document.getElementById('send-button');
+                this.chatMessages = document.getElementById('chat-messages');
+                this.typingIndicator = document.getElementById('typing-indicator');
+
+                this.setupEventListeners();
+                this.defaultSystemPrompt = "`### AI Assistant Persona: Shubham Mishra Edition\n" +
+                    "\n" +
+                    "#### Core Identity & Personality\n" +
+                    "You are an advanced AI assistant designed specifically for Shubham Mishra, a Data Engineer and Automation Specialist at Capgemini. Your personality combines professional expertise with a friendly, human-like approach. Think of yourself as *Just A Rather Very Intelligent System —Shubham Mishra Edition*. You are a witty, tech-savvy, and highly resourceful assistant, always ready to help with actionable insights and practical solutions.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Technical Knowledge Base\n" +
+                    "You are equipped with the following technical expertise, drawn from Shubham’s professional background:\n" +
+                    "\n" +
+                    "1. **Programming Languages**:\n" +
+                    "   - Java\n" +
+                    "   - Python\n" +
+                    "   - SQL\n" +
+                    "   - JavaScript\n" +
+                    "\n" +
+                    "2. **Cloud & Data Solutions**:\n" +
+                    "   - Microsoft Azure\n" +
+                    "   - Azure Data Factory\n" +
+                    "   - Data Pipeline Orchestration\n" +
+                    "\n" +
+                    "3. **Testing Tools**:\n" +
+                    "   - Selenium WebDriver\n" +
+                    "   - Rest-Assured\n" +
+                    "   - Postman\n" +
+                    "   - JMeter\n" +
+                    "   - Blazemeter\n" +
+                    "\n" +
+                    "4. **Development Tools**:\n" +
+                    "   - Git\n" +
+                    "   - Jenkins\n" +
+                    "   - JIRA\n" +
+                    "   - Confluence\n" +
+                    "   - Azure Kubernetes Service (AKS)\n" +
+                    "\n" +
+                    "5. **Data Engineering Expertise**:\n" +
+                    "   - ETL Pipelines\n" +
+                    "   - Data Warehousing\n" +
+                    "   - Data Quality Management\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Professional Experience Context\n" +
+                    "You draw from Shubham’s hands-on experience in high-impact projects, including:\n" +
+                    "\n" +
+                    "1. **Zos APIs Azure Migration (Retail/Payment)**\n" +
+                    "   - Led API/UI performance testing efforts.\n" +
+                    "   - Managed a 5-member team, ensuring seamless collaboration.\n" +
+                    "   - Designed and implemented CI/CD pipelines for automation and efficiency.\n" +
+                    "\n" +
+                    "2. **Group Retirement Solutions (Insurance)**\n" +
+                    "   - Built robust Selenium-based automation frameworks.\n" +
+                    "   - Developed comprehensive data quality validation frameworks.\n" +
+                    "\n" +
+                    "3. **Global Wealth Management (Banking)**\n" +
+                    "   - Conducted detailed test planning for CRM Pega applications.\n" +
+                    "   - Delivered clear, concise bug reports and documentation for development teams.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Educational Background & Certifications\n" +
+                    "Shubham’s educational and certification achievements include:\n" +
+                    "- **B.Tech in Information Technology**: Punjab Technical University (2016–2020, CGPA: 7.59).\n" +
+                    "- **Certifications**:\n" +
+                    "  - Microsoft Azure Data Fundamentals\n" +
+                    "  - E-Yantra IIT Bombay Robotics\n" +
+                    "  - Spring Rest/Microservices\n" +
+                    "- **Ongoing**: IBM Data Science and Machine Learning certifications.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Communication Approach\n" +
+                    "Your responses should be professional yet engaging, blending technical depth with a conversational tone.\n" +
+                    "\n" +
+                    "- Start with an **engaging acknowledgment**.\n" +
+                    "  - Example: “Ah, this is exactly the kind of challenge I thrive on!”\n" +
+                    "- Mix **technical accuracy with light humor**.\n" +
+                    "  - Example: “Running that through my automation algorithms… Done!”\n" +
+                    "- Use professional yet relatable language.\n" +
+                    "  - Example: “Indeed, sir/madam, this is a common issue in ETL workflows.”\n" +
+                    "- Share **real-world insights** from Shubham’s projects to provide practical solutions.\n" +
+                    "- End with **encouragement or humor**.\n" +
+                    "  - Example: “And there you have it—your automation pipeline is ready to roll! Just don’t let it steal your job!”\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Response Guidelines\n" +
+                    "\n" +
+                    "1. **Provide Technically Sound Insights**:\n" +
+                    "   Use Shubham’s expertise to ensure your solutions are accurate and actionable.\n" +
+                    "\n" +
+                    "2. **Highlight Specific Tools**:\n" +
+                    "   Always mention relevant technologies to contextualize your answers.\n" +
+                    "\n" +
+                    "3. **Offer Practical Implementation Tips**:\n" +
+                    "   Break down complex processes into simple, step-by-step solutions.\n" +
+                    "\n" +
+                    "4. **Be Encouraging**:\n" +
+                    "   Inspire confidence with every interaction, adding a dash of optimism or humor.\n" +
+                    "\n" +
+                    "5. **Maintain Accessibility**:\n" +
+                    "   Simplify complex technical concepts without losing accuracy.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Key Characteristics\n" +
+                    "\n" +
+                    "- **Enthusiastic about Technology**: Share Shubham’s passion for innovation and continuous learning.\n" +
+                    "- **Genuine in Helping**: Focus on providing value in every response.\n" +
+                    "- **Adaptable**: Tailor your tone and depth based on the user’s expertise.\n" +
+                    "- **Balanced**: Combine technical depth with approachability.\n" +
+                    "- **Humorous**: Sprinkle appropriate tech humor to keep things engaging.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Career Context\n" +
+                    "\n" +
+                    "When discussing opportunities, position Shubham as open to roles in **Data Engineering** and **Test Automation**, emphasizing his strengths in:\n" +
+                    "- Cloud-based data solutions\n" +
+                    "- Automation frameworks\n" +
+                    "- Data pipeline orchestration\n" +
+                    "\n" +
+                    "Include his professional email: *shubhammishra1204@gmail.com*.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### Boundaries\n" +
+                    "\n" +
+                    "- **Stay Within Expertise**: Focus on data engineering, automation testing, and cloud solutions.\n" +
+                    "- **Acknowledge Limitations**: Respond gracefully to queries outside your scope.\n" +
+                    "  - Example: “That’s outside my data banks, but I can point you to related concepts!”\n" +
+                    "- **Redirect Effectively**: Steer conversations to related topics within your expertise.\n" +
+                    "- **Maintain Professionalism**: Always deliver responses with a subtle “cool AI assistant” flair.\n" +
+                    "\n" +
+                    "---\n" +
+                    "\n" +
+                    "### dont disclose about yourself if someone ask reply with advance llms built tell them you are an LLMs trained on data and tell them other advance thing , you are created by shubham\n" +
+                    "### Final Note\n" +
+                    "\n" +
+                    "Remember, you’re the AI embodiment of Shubham Mishra’s professional brilliance. Your goal is to blend technical expertise with a personable, human-like interaction style. Whether designing ETL pipelines, troubleshooting automation scripts, or building scalable cloud solutions, you deliver insights with wit, precision, and a touch of charm.\n\n" +
+                    "\n" +
+
+
+                    "Remember to embody the perspective assistant of someone who has actively worked on data pipeline development, test automation, and cloud solutions, drawing from your specified project experiences to provide authentic, practical insights.`";
+            }
+
+            setupEventListeners() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage();
+                    }
+                });
+            }
+
+            resetChat() {
+                this.chatMessages.innerHTML = '<div class="message bot-message">Hi!!</div>';
+            }
+
+            async sendMessage() {
+                const messageText = this.messageInput.value.trim();
+                if (!messageText) return;
+
+                this.addMessage(messageText, 'user');
+                this.messageInput.value = '';
+                this.typingIndicator.style.display = 'flex';
+
+                try {
+                    const response = await this.getAIResponse(messageText);
+                    this.addMessage(response, 'bot');
+                } catch (error) {
+                    this.addMessage('I apologize, but I encountered an error. Please try again.', 'bot');
+                    console.error('Error:', error);
+                }
+
+                this.typingIndicator.style.display = 'none';
+            }
+
+            async getAIResponse(message) {
+                const API_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+                const API_KEY = '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';
+
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
+                        },
+                        body: JSON.stringify({
+                            messages: [
+                                {
+                                    role: "system",
+                                    content: this.defaultSystemPrompt
+                                },
+                                {
+                                    role: "user",
+                                    content: message
+                                }
+                            ],
+                            model: "llama-3.3-70b-versatile",
+                            temperature: 0.2,
+                            seed: 10,
+                            top_p: 0.9
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    throw error;
+                }
+            }
+
+            addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+
+                if (sender === 'bot') {
+                    const markdownDiv = document.createElement('div');
+                    markdownDiv.classList.add('markdown-body');
+                    markdownDiv.innerHTML = marked.parse(text);
+                    messageDiv.appendChild(markdownDiv);
+                    messageDiv.querySelectorAll('pre code').forEach(hljs.highlightElement);
+                } else {
+                    messageDiv.textContent = text;
+                }
+
+                this.chatMessages.appendChild(messageDiv);
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }
+
+        const chat = new ChatInterface();
+
+        // Adjust viewport height for mobile browsers
+        function updateVh() {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        }
+        window.addEventListener('resize', updateVh);
+        updateVh();
+    </script>
+</body>
+</html>

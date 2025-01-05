@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Me</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative; /* Required for absolute positioning of canvas */
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(60, 60, 60, 0.88) 100%);
+            color: #0c0c0e;
+            line-height: 1.6;
+        }
+        /* Canvas Styles for Neural Network Animation */
+        #neural-network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Place behind other content */
+             pointer-events: none; /* Prevent canvas from interfering with clicks */
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            padding: 0 40px;
+            margin: 0 auto;
+            position: relative; /* Ensure content is above the canvas */
+            z-index: 1; /* Ensure content is above the canvas */
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgb(223, 218, 218);
+            backdrop-filter: saturate(180%) blur(40px);
+            z-index: 1000;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.1);
+        }
+        .nav-wrapper {
+            display: flex;
+           justify-content: flex-start;
+            align-items: center;
+            height: 60px;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        .logo {
+            color: #121212;
+            font-weight: 600;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+        }
+        .logo i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            margin-left: -40px;
+        }
+        nav a {
+            color: #121212;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        nav a:hover {
+            opacity: 1;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2997ff;
+            transition: width 0.3s ease;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        .contact-hero {
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding-top: 60px;
+        }
+        .contact-hero h1 {
+            font-size: 64px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #121212, #121212);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+        .contact-details {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        .contact-details:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        .contact-details h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #121212, #0c0c0e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .contact-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .contact-item i {
+            font-size: 24px;
+            color: #2997ff;
+        }
+        .contact-item a {
+            color: #050505;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .contact-item a:hover {
+            color: #2997ff;
+        }
+        .social-links {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .social-links a {
+            color: rgba(18, 18, 18, 0.85);
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+        .social-links a:hover {
+            color: #4062da;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas for the animated background -->
+    <canvas id="neural-network-canvas"></canvas>
+
+    <header>
+        <div class="nav-wrapper">
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="projects.html">Projects</a>
+                <a href="blogs.html">Blogs</a>
+                <a href="chatbot.html">Chat</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="contact-hero">
+            <div class="contact-details">
+                <h2>Get In Touch</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:saurab23@iisertvm.ac.in">shubhammishra1204@gmail.com</a>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/shubham-mishra-41271916b/" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('neural-network-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        const nodes = [];
+        const numNodes = 40;
+        const nodeRadius = 3;
+        const nodeColor = '#020f45';
+        const connectionColor = 'rgb(3,4,9)'; // Semi-transparent blue
+
+        class Node {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5; // Reduced speed
+                this.vy = (Math.random() - 0.5) * 0.5; // Reduced speed
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, nodeRadius, 0, Math.PI * 2);
+                ctx.fillStyle = nodeColor;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numNodes; i++) {
+            nodes.push(new Node());
+        }
+
+        function drawConnections() {
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) { // Reduced connection distance
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.strokeStyle = connectionColor;
+                        ctx.lineWidth = 0.5; // Reduced line width
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+
+            drawConnections();
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
